@@ -1,4 +1,5 @@
-const User = require('../models/user');
+const { default: mongoose } = require('mongoose');
+const Admin = require('../models/admin');
 const jwt = require('jsonwebtoken');
 
 const createToken = (_id) => {
@@ -9,13 +10,14 @@ const createToken = (_id) => {
 
 ///////////////////////// LOGIN /////////////////////////////
 
-exports.login = async (req, res) => {
-  console.log('loginUser');
+exports.signIn = async (req, res) => {
+  console.log('loginAdmin');
   const { email, password } = req.body;
   try {
-    const user = await User.login(email, password);
-    const token = createToken(user._id);
+    const admin = await Admin.login(email, password);
+    const token = createToken(admin._id);
     res.status(200).json({ email, token });
+    console.log( email +' (admin) logged in');
   } catch (error) {
     console.log('error.message :' + error.message);
     res.status(400).json({ error: error.message });
@@ -24,14 +26,16 @@ exports.login = async (req, res) => {
 
 ///////////////////////// REGISTER /////////////////////////////
 
-exports.register = async (req, res) => {
-  const { email, password, confirmPassword } = req.body;
-  console.log(email, password, confirmPassword);
+exports.signUp = async (req, res) => {
+  const { email, password} = req.body;
+  console.log(email, password);
   try {
-    const user = await User.register(email, password, confirmPassword);
+    const admin = await Admin.register(email, password);
 
-    const token = createToken(user._id);
+    const token = createToken(admin._id);
+    console.log("data", email, password, );
     res.status(201).json({ email, token });
+    console.log(email +' (admin) created');
   } catch (error) {
     console.log('error.message :' + error.message);
     res.status(400).json({ error: error.message });

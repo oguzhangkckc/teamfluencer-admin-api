@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 
-const userSchema = new Schema(
+const adminSchema = new Schema(
   {
     password: {
       type: String,
@@ -19,7 +19,7 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-userSchema.statics.register = async function (email, password, confirmPassword) {
+adminSchema.statics.register = async function (email, password) {
   if (email === '') {
     throw Error('Email is required!');
   }
@@ -28,20 +28,12 @@ userSchema.statics.register = async function (email, password, confirmPassword) 
     throw Error('Password is required!');
   }
 
-  if (confirmPassword === '') {
-    throw Error('Confirm password is required!');
-  }
-
   if (!validator.isEmail(email)) {
     throw Error('Please enter a valid email address!');
   }
 
   if (password.length < 6) {
     throw Error('The password must be at least 6 characters');
-  }
-
-  if (password !== confirmPassword) {
-    throw Error('Passwords do not match!');
   }
 
   const exists = await this.findOne({ email });
@@ -54,12 +46,12 @@ userSchema.statics.register = async function (email, password, confirmPassword) 
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
 
-  const user = await this.create({ email, password: hash });
+  const admin = await this.create({ email, password: hash });
 
-  return user;
+  return admin;
 };
 
-userSchema.statics.login = async function (email, password) {
+adminSchema.statics.login = async function (email, password) {
   if (!email || !password) {
     throw Error('Please fill all the fields!');
   }
@@ -68,36 +60,27 @@ userSchema.statics.login = async function (email, password) {
     throw Error('Please enter a valid email address!');
   }
 
-  const user = await this.findOne({ email });
+  const admin = await this.findOne({ email });
 
-  if (!user) {
+  if (!admin) {
     throw Error('Email or password is wrong!');
   }
 
-  const match = await bcrypt.compare(password, user.password);
+  const match = await bcrypt.compare(password, admin.password);
 
   if (!match) {
     throw Error('Email or password is wrong!');
   }
-  console.log('user logged in');
-  return user;
+  return admin;
 };
 
-userSchema.statics.resetPassword = async function (email, password, confirmPassword) {
+adminSchema.statics.resetPassword = async function (email, password) {
   if (email === '') {
     throw Error('Email is required!');
   }
 
   if (password === '') {
     throw Error('Password is required!');
-  }
-
-  if (confirmPassword === '') {
-    throw Error('Confirm password is required!');
-  }
-
-  if (password !== confirmPassword) {
-    throw Error('Passwords do not match!');
   }
 
   if (!validator.isEmail(email)) {
@@ -108,9 +91,9 @@ userSchema.statics.resetPassword = async function (email, password, confirmPassw
     throw Error('The password must be at least 6 characters');
   }
 
-  const user = await this.findOne({ email });
+  const admin = await this.findOne({ email });
 
-  if (!user) {
+  if (!admin) {
     throw Error('There is no such email!');
   }
 
@@ -122,4 +105,4 @@ userSchema.statics.resetPassword = async function (email, password, confirmPassw
   return resetPassword;
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Admin', adminSchema);
