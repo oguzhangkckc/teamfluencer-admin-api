@@ -1,4 +1,3 @@
-const { default: mongoose } = require('mongoose');
 const Admin = require('../models/admin');
 const jwt = require('jsonwebtoken');
 
