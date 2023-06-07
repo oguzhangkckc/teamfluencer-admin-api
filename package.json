@@ -29,6 +29,7 @@
     "chai": "^4.3.7",
     "chai-http": "^4.3.0",
     "mocha": "^10.2.0",
+    "mongodb-memory-server": "^8.12.2",
     "supertest": "^6.3.3"
   }
 }
