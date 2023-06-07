@@ -39,7 +39,7 @@ afterEach(async function () {
 describe('signUp Endpoint /admin/signUp', () => {
   it('The test should verify the successful registration of a new user and the return of a token.', (done) => {
     const admin = {
-      email: 'test@example.com',
+      email: 'test2@example.com',
       password: 'password123',
     };
 
