@@ -7,8 +7,9 @@ chai.use(chaiHttp);
 describe('signIn Endpoint /admin/signIn', () => {
     it('The test should verify the successful login of a user and the return of a token.', (done) => {
         const admin = {
-            email: 'ahmet@gmail.com',
-            password: '123456789'
+            email: 'test@example.com',
+            password: 'password123',
+            role: 'admin'
         };
 
         chai
@@ -17,8 +18,9 @@ describe('signIn Endpoint /admin/signIn', () => {
             .send(admin)
             .end((err, res) => {
                 chai.expect(res).to.have.status(200);
-                chai.expect(res.body).to.have.property("email", admin.email);
-                chai.expect(res.body).to.have.property("token");
+                chai.expect(res.body).to.have.property('email', admin.email);
+                chai.expect(res.body).to.have.property('role', admin.role);
+                chai.expect(res.body).to.have.property('token');
                 done(err);
             })
     })

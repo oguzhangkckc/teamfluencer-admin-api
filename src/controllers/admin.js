@@ -1,8 +1,8 @@
 const Admin = require('../models/admin');
 const jwt = require('jsonwebtoken');
 
-const createToken = (_id) => {
-  return jwt.sign({ _id }, process.env.JWT_SECRET, {
+const createToken = (_id, role) => {
+  return jwt.sign({ _id, role }, process.env.JWT_SECRET, {
     expiresIn: '1d',
   });
 };
@@ -14,9 +14,14 @@ exports.signIn = async (req, res) => {
   const { email, password } = req.body;
   try {
     const admin = await Admin.login(email, password);
-    const token = createToken(admin._id);
-    res.status(200).json({ email, token });
-    console.log( email +' (admin) logged in');
+    admin.role = 'admin';
+    const token = createToken(admin._id, admin.role);
+    console.log(admin._id, admin.role)
+    // Tokenı yanıt başlığına ekle
+    res.header('Authorization', `Bearer ${token}`);
+
+    res.status(200).json({ email, token, role: admin.role });
+    console.log(email + ' (admin) logged in');
   } catch (error) {
     console.log('error.message :' + error.message);
     res.status(400).json({ error: error.message });
