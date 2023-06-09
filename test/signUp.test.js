@@ -37,39 +37,49 @@ afterEach(async function () {
 });
 
 describe('signUp Endpoint /admin/signUp', () => {
-  it('The test should verify the successful registration of a new user and the return of a token.', (done) => {
+  it('The test should verify the successful registration of a new user and the return of a sessionId.', async () => {
     const admin = {
       email: 'test2@example.com',
       password: 'password123',
+      role: "admin",
     };
 
-    chai
+
+    const res = await chai
       .request(app)
       .post('/admin/signUp')
-      .send(admin)
-      .end((err, res) => {
-        chai.expect(res).to.have.status(201);
-        chai.expect(res.body).to.have.property('email', admin.email);
-        chai.expect(res.body).to.have.property('token');
-        createdAdminEmail = res.body.email;
-        console.log("createdAdminId" + createdAdminEmail);
-        done(err);
-      });
+      .send(admin);
+
+    chai.expect(res).to.have.status(201);
+    chai.expect(res.body).to.have.property('session');
+    const session = res.body.session;
+    const sessionId = Object.keys(session)[0];
+    chai.expect(session).to.be.an('object');
+    console.log("res.body.session", res.body.session)
+
+    // "19ad92a0-d9e3-4268-89b0-58c9d1fac9a8"
+    // console.log("res.body.session.email", res.body.session[0].email)
+    const email = session[sessionId].email;
+    const role = session[sessionId].role;
+
+    chai.expect(email).to.equal(admin.email);
+    chai.expect(role).to.equal(admin.role);
+
+    console.log("createdAdminId" + createdAdminEmail);
+    createdAdminEmail = email;
   });
 
-  it('The test should return an error when there is missing information.', (done) => {
+  it('The test should return an error when there is missing information.', async () => {
     const admin = {
       email: 'test@example.com',
     };
 
-    chai
+    const res = await chai
       .request(app)
       .post('/admin/signUp')
-      .send(admin)
-      .end((err, res) => {
-        chai.expect(res).to.have.status(400);
-        chai.expect(res.body).to.have.property('error');
-        done(err);
-      });
+      .send(admin);
+
+    chai.expect(res).to.have.status(400);
+    chai.expect(res.body).to.have.property('error');
   });
 });

@@ -4,40 +4,49 @@ const app = require('../App');
 
 chai.use(chaiHttp);
 
-describe('signIn Endpoint /admin/signIn', () => {
-    it('The test should verify the successful login of a user and the return of a token.', (done) => {
+describe('signin endpoint /admin/signIn', function() {
+    this.timeout(5000)
+    it('should return a session token and email when login is successful', async function() {
         const admin = {
             email: 'test@example.com',
             password: 'password123',
-            role: 'admin'
+            _id: '648084c726d6bc4fd371a397'
         };
 
-        chai
+        const res = await chai
             .request(app)
             .post('/admin/signIn')
-            .send(admin)
-            .end((err, res) => {
-                chai.expect(res).to.have.status(200);
-                chai.expect(res.body).to.have.property('email', admin.email);
-                chai.expect(res.body).to.have.property('role', admin.role);
-                chai.expect(res.body).to.have.property('token');
-                done(err);
-            })
-    })
+            .send(admin);
 
-    it('The test should return an error when there is missing information.', (done) => {
+        chai.expect(res).to.have.status(201);
+        chai.expect(res.body).to.have.property('session');
+
+        const session = res.body.session;
+        const sessionId = Object.keys(session)[0];
+
+        const email = session[sessionId].email;
+        const userId = session[sessionId].userId;
+        const role = session[sessionId].role;
+
+        chai.expect(email).to.equal(admin.email);
+        chai.expect(userId).to.equal(admin._id);
+        chai.expect(role).to.equal('admin');
+    });
+
+    it('should return an error when email or password is incorrect', async function() {
         const admin = {
-            email: "wrong@gmail.com"
+          email: 'wrong@example.com',
+          password: 'wrongpassword'
         };
+      
+        const res = await chai
+          .request(app)
+          .post('/admin/signIn')
+          .send(admin);
+      
+        chai.expect(res).to.have.status(400);
+        chai.expect(res.body).to.have.property('error').that.is.a('string');
+      });
+      
 
-        chai
-            .request(app)
-            .post('/admin/signIn')
-            .send(admin)
-            .end((err, res) => {
-                chai.expect(res).to.have.status(400);
-                chai.expect(res.body).to.have.property("error")
-                done(err);
-            })
-    })
-})
+});
