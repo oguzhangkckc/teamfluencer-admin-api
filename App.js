@@ -3,7 +3,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const userRouter = require('./src/routes/admin');
+const adminRouter = require('./src/routes/admin');
 
 const port = process.env.PORT || 3000;
 
@@ -15,24 +15,21 @@ app.use(cors());
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('<h1>Hello World</h1>');
-});
-app.use('/admin', userRouter);
+app.use('/admin', adminRouter);
 
 mongoose
-    .connect(process.env.DB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => {
-        console.log('Database connected successfully');
-        app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
-        });
-    })
-    .catch((err) => {
-        console.log('Error connecting to the database', err);
+  .connect(process.env.DB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('Database connected successfully');
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
     });
+  })
+  .catch((err) => {
+    console.log('Error connecting to the database', err);
+  });
 
 module.exports = app;

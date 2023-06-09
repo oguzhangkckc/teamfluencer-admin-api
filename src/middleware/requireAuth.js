@@ -1,20 +1,24 @@
-const Admin = require('../models/admin')
+const cookieSession = require('cookie-session');
+const express = require('express');
+const app = express();
+require('dotenv').config();
 
-const requireAuth = async (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization) {
-    return res.status(401).json({ error: 'You must be logged in.' });
-  }
+app.use(
+  cookieSession({
+    name: 'session',
+    keys: [process.env.COOKIE_KEY1, process.env.COOKIE_KEY2],
+    maxAge: 24 * 60 * 60 * 1000,
+  }),
+);
 
-  const token = authorization.split(' ')[1];
-
-  try {
-    const { _id } = jwt.verify(token, process.env.JWT_SECRET);
-    req.admin = await Admin.findById({ _id }).select('_id');
+function requireLogin(req, res, next) {
+  if (!req.session) {
+    res.status(401).json({ error: 'Unauthorized. Please login.' });
+  } else if (!req.session.userId) {
+    res.status(401).json({ error: 'Unauthorized. Please login.' });
+  } else {
     next();
-  } catch (e) {
-    res.status(401).json({ error: 'You must be logged in.' });
   }
-};
+}
 
-module.exports = { requireAuth };
+module.exports = requireLogin;

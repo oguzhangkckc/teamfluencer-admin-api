@@ -36,36 +36,25 @@ afterEach(async function () {
   }
 });
 
-describe('signUp Endpoint /admin/signUp', () => {
+describe('signup Endpoint /admin/signup', () => {
   it('The test should verify the successful registration of a new user and the return of a sessionId.', async () => {
     const admin = {
       email: 'test2@example.com',
       password: 'password123',
-      role: "admin",
+      role: 'admin',
     };
 
-
-    const res = await chai
-      .request(app)
-      .post('/admin/signUp')
-      .send(admin);
+    const res = await chai.request(app).post('/admin/signup').send(admin);
 
     chai.expect(res).to.have.status(201);
     chai.expect(res.body).to.have.property('session');
     const session = res.body.session;
     const sessionId = Object.keys(session)[0];
     chai.expect(session).to.be.an('object');
-    console.log("res.body.session", res.body.session)
-
-    // "19ad92a0-d9e3-4268-89b0-58c9d1fac9a8"
-    // console.log("res.body.session.email", res.body.session[0].email)
     const email = session[sessionId].email;
     const role = session[sessionId].role;
-
     chai.expect(email).to.equal(admin.email);
     chai.expect(role).to.equal(admin.role);
-
-    console.log("createdAdminId" + createdAdminEmail);
     createdAdminEmail = email;
   });
 
@@ -74,10 +63,7 @@ describe('signUp Endpoint /admin/signUp', () => {
       email: 'test@example.com',
     };
 
-    const res = await chai
-      .request(app)
-      .post('/admin/signUp')
-      .send(admin);
+    const res = await chai.request(app).post('/admin/signup').send(admin);
 
     chai.expect(res).to.have.status(400);
     chai.expect(res.body).to.have.property('error');

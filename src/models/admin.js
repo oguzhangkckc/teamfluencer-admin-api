@@ -43,11 +43,11 @@ adminSchema.statics.register = async function (email, password) {
     throw Error('This email is already registered');
   }
 
-  const salt = await bcrypt.genSalt(10);
+  const salt = await bcrypt.genSalt();
   const hash = await bcrypt.hash(password, salt);
 
   const admin = await this.create({ email, password: hash });
-  
+
   admin.role = 'admin';
   return admin;
 };
