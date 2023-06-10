@@ -21,7 +21,7 @@ describe('GET /user/getuser', function() {
     });
 
     it('should return a user when phone parameter is provided', async function() {
-        const phone = '123456789';
+        const phone = '5423905123';
 
         const res = await chai
             .request(app)
