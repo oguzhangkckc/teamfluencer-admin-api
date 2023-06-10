@@ -26,5 +26,3 @@ exports.getUser = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-
-    // doğumgünü, isim, email, telefon, instagram, tiktok, money, job, country/city, gender

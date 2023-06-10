@@ -1,8 +1,15 @@
 const express = require('express');
-const { signIn, signUp } = require('../controllers/admin');
+const { signin, signup } = require('../controllers/admin');
 const adminRouter = express.Router();
+const requireAuth = require('../middleware/requireAuth');
 
-adminRouter.post('/signUp', signUp);
-adminRouter.post('/signIn', signIn);
+adminRouter.post('/signup', signup);
+adminRouter.post('/signin', signin);
+
+adminRouter.use(requireAuth);
+
+adminRouter.get('/', (req, res) => {
+  res.send('<h1>Hello World</h1>');
+});
 
 module.exports = adminRouter;
