@@ -2,20 +2,21 @@ const User = require('../models/user');
 
 exports.getuser = async (req, res) => {
     try {
-        const { email, phone } = req.query;
+        const { _email, _phone } = req.query;
 
-        if (!email && !phone) {
+        if (!_email && !_phone) {
             return res.status(400).json({ error: 'You should provide at least one parameter: email, phone.' });
         }
 
         const searchParameters = [];
 
-        if (email) {
-            searchParameters.push({ email });
+        if (_email) {
+            searchParameters.push({ email: _email });
         }
 
-        if (phone) {
-            searchParameters.push({ phone: `+${phone}` });
+        if (_phone) {
+            console.log("deneme")
+            searchParameters.push({ phone: `+${_phone}` });
         }
 
         const user = await User.findOne({ $or: searchParameters });
@@ -24,7 +25,7 @@ exports.getuser = async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        const { birthday, name, insta, tiktok, money, job, country, city, gender } = user;
+        const { birthday, name, insta, tiktok, email, phone, money, job, country, city, gender } = user;
         const userData = {
             birthday,
             name,
