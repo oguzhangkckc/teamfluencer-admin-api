@@ -4,35 +4,53 @@ const app = require('../../App');
 
 chai.use(chaiHttp);
 
-describe('get user endpoint /user/getUser', function() {
-    this.timeout(5000)
-    it('should return a user when user is found', async function() {
-        const user = {
-            email: 'dilara@teamfluencer.co',
-        };
-    
+describe('GET /user/getuser', function() {
+    this.timeout(5000);
+
+    it('should return a user when email parameter is provided', async function() {
+        const email = 'dilara@teamfluencer.co';
+
         const res = await chai
             .request(app)
-            .get('/user/getUser')
-            .send(user);
+            .get('/user/getuser')
+            .query({ email });
 
-        chai.expect(res).to.have.status(201);
-        chai.expect(res.body).to.have.property('email');
+        chai.expect(res).to.have.status(200);
+        chai.expect(res.body).to.have.property('email').to.equal(email);
         chai.expect(res.body).to.have.property('phone');
     });
 
-    it('should return an error when user is not found', async function() {
-        const user = {
-            email: 'wrong@email.com',
-        };
+    it('should return a user when phone parameter is provided', async function() {
+        const phone = '123456789';
 
         const res = await chai
             .request(app)
-            .get('/user/getUser')
-            .send(user);
+            .get('/user/getuser')
+            .query({ phone });
+
+        chai.expect(res).to.have.status(200);
+        chai.expect(res.body).to.have.property('email');
+        chai.expect(res.body).to.have.property('phone').to.equal(phone);
+    });
+
+    it('should return an error when no parameter is provided', async function() {
+        const res = await chai
+            .request(app)
+            .get('/user/getuser');
+
+        chai.expect(res).to.have.status(400);
+        chai.expect(res.body).to.have.property('error').to.equal('You should provide at least one parameter: email, phone.');
+    });
+
+    it('should return an error when user is not found', async function() {
+        const email = 'nonexistent@example.com';
+
+        const res = await chai
+            .request(app)
+            .get('/user/getuser')
+            .query({ email });
 
         chai.expect(res).to.have.status(404);
-        chai.expect(res.body).to.have.property('error').that.is.a('string');
+        chai.expect(res.body).to.have.property('error').to.equal('User not found');
     });
 });
-
