@@ -13,6 +13,7 @@ describe('GET /user/getverificationprofiles', function() {
             .get('/user/getverificationprofiles');
 
         chai.expect(res).to.have.status(200);
+        chai.expect(res.body.length).to.be.equal(200);
         chai.expect(res.body).to.be.an('array');
     });
 
