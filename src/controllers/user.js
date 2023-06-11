@@ -55,76 +55,32 @@ exports.getverificationprofiles = async (req, res) => {
     const count = 200;
 
     try {
-        // if (req.query.country) {
-        //     if (req.query.country === "TR") {
-        //         query.country = "TR";
-        //     } else {
-        //         query.country = "OTHERS";
-        //     }
-        // }
-        // if (req.query.gender) {
-        //     query.gender = req.query.gender;
-        // }
-        // if (req.query.age) {
-        //     const { min, max } = req.query.age;
-        //     query.age = { $gte: parseInt(min), $lte: parseInt(max) };
-        // }
-        // if (req.query.followers) {
-        //     const { min, max } = req.query.followers;
-        //     query.followers = { $gte: parseInt(min), $lte: parseInt(max) };
-        // }            
-        // if (req.query.tiktok_followers) {
-        //     const { min, max } = req.query.tiktok_followers;
-        //     query.tiktok_followers = { $gte: parseInt(min), $lte: parseInt(max) };
-        // }
-        // if (req.query.post_number) {
-        //     const { min, max } = req.query.post_number;
-        //     query.post_number = { $gte: parseInt(min), $lte: parseInt(max) };
-        // }
-        // if (req.query.videos) {
-        //     const { min, max } = req.query.videos;
-        //     query.videos = { $gte: parseInt(min), $lte: parseInt(max) };
-        // }
-        // if (req.query.average_likes) {
-        //     const { min, max } = req.query.average_likes;
-        //     query.average_likes = { $gte: parseInt(min), $lte: parseInt(max) };
-        // }
-        // if (req.query.tiktok_average_like) {
-        //     const { min, max } = req.query.tiktok_average_like;
-        //     query.tiktok_average_like = { $gte: parseInt(min), $lte: parseInt(max) };;
-        // }
-        // if (req.query.tiktok_engagement_rate) {
-        //     const { min, max } = req.query.tiktok_engagement_rate;
-        //     query.tiktok_engagement_rate = { $gte: parseInt(min), $lte: parseInt(max) };
-        // }
-
         const profiles = await Verification.find(query)
-            .populate('user')
-            .sort({ application_date: 1 })
-            .limit(count)
-            .exec();
+        .populate('user')
+        .sort({ application_date: 1 })
+        .limit(count)
+        .exec();
 
-        const verificationProfiles = profiles.map((profile) => {
-            return {
-                name: profile.user.name,
-                gender: profile.user.gender,
-                age: profile.user.age,
-                email: profile.user.email,
-                country: profile.user.country,
-                phone: profile.user.phone,
-                profile_complete: profile.user.profile_complete,
-                followers: profile.user.insta.followers,
-                post_number: profile.user.insta.post_number,
-                average_like: profile.user.insta.average_like,
-                tiktok_followers: profile.user.tiktok.followers,
-                videos: profile.user.tiktok.videos.length,
-                tiktok_average_like: profile.user.tiktok.tiktok_average_like,
-                tiktok_engagement_rate: profile.user.tiktok.tiktok_engagement_rate,
-            };
-        });
-        console.log(query);
-        res.status(200).json(verificationProfiles);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    const verificationProfiles = profiles.map((profile) => {
+        return {
+            name: profile.user.name,
+            gender: profile.user.gender,
+            age: profile.user.age,
+            email: profile.user.email,
+            country: profile.user.country,
+            phone: profile.user.phone,
+            profile_complete: profile.user.profile_complete,
+            followers: profile.user.insta.followers,
+            post_number: profile.user.insta.post_number,
+            average_like: profile.user.insta.average_like,
+            tiktok_followers: profile.user.tiktok.followers,
+            videos: profile.user.tiktok.videos.length,
+            tiktok_average_like: profile.user.tiktok.tiktok_average_like,
+            tiktok_engagement_rate: profile.user.tiktok.tiktok_engagement_rate,
+        };
+    });
+    res.status(200).json(verificationProfiles);
+} catch (error) {
+    res.status(500).json({ error: error.message });
+}
 };
