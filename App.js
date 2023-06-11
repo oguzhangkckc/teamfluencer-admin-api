@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -13,6 +14,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
+app.use(compression());
 
 app.use(express.json());
 
